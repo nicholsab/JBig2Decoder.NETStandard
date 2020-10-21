@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>nicholsab</Authors>
+    <Description>A .NET Standard version by nicholsab of the JBig2Decoder.NET package by devteamexpress https://www.nuget.org/packages/JBig2Decoder.NET/ 
+JBig2Decoder.NET is a .Net Port of the JPedal JBig2Decoder Implementation.</Description>
+    <Copyright>nicholsab 2020</Copyright>
+    <PackageReleaseNotes>A .NET Standard version by nicholsab of the JBig2Decoder.NET package by devteamexpress https://www.nuget.org/packages/JBig2Decoder.NET/ 
+JBig2Decoder.NET is a .Net Port of the JPedal JBig2Decoder Implementation.</PackageReleaseNotes>
+    <RepositoryUrl>https://github.com/nicholsab/JBig2Decoder.NETStandard</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/nicholsab/JBig2Decoder.NETStandard</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+  </ItemGroup>
+
+</Project>
