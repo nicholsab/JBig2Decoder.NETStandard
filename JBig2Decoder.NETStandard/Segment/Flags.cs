@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace JBig2Decoder.NETCore
+namespace JBig2Decoder.NETStandard
 {
   public abstract class Flags
   {

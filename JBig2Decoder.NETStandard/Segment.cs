@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JBig2Decoder.NETCore
+namespace JBig2Decoder.NETStandard
 {
 	public abstract class Segment
 	{

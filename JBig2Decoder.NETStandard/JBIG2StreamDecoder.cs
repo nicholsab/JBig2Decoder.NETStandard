@@ -4,7 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 
-namespace JBig2Decoder.NETCore
+namespace JBig2Decoder.NETStandard
 {
     public enum ImageFormat { JPEG, TIFF, PNG }
     public class JBIG2StreamDecoder

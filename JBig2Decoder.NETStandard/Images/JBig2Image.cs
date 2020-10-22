@@ -1,9 +1,9 @@
-﻿using JBig2Decoder.NETCore;
+﻿using JBig2Decoder.NETStandard;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace JBig2Decoder.NETCore
+namespace JBig2Decoder.NETStandard
 {
   public sealed class JBIG2Bitmap
   {

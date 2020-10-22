@@ -4,7 +4,7 @@ using System.Text;
 using System.IO;
 using System.Drawing;
 
-namespace JBig2Decoder.NETCore
+namespace JBig2Decoder.NETStandard
 {
   public static class ResizeHelpers
   {
