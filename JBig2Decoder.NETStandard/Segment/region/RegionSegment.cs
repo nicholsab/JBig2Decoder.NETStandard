@@ -1,49 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace JBig2Decoder.NETStandard
 {
-  public abstract class RegionSegment : Segment
-  {
-    protected int regionBitmapWidth, regionBitmapHeight;
-    protected int regionBitmapXLocation, regionBitmapYLocation;
-
-    protected RegionFlags regionFlags = new RegionFlags();
-
-    public RegionSegment(JBIG2StreamDecoder streamDecoder) : base(streamDecoder) { }
-
-    public override void ReadSegment()
+    public abstract class RegionSegment : Segment
     {
-      short[] buff = new short[4];
-      decoder.Readbyte(buff);
-      regionBitmapWidth = BinaryOperation.GetInt32(buff);
+        protected int regionBitmapWidth, regionBitmapHeight;
+        protected int regionBitmapXLocation, regionBitmapYLocation;
 
-      buff = new short[4];
-      decoder.Readbyte(buff);
-      regionBitmapHeight = BinaryOperation.GetInt32(buff);
+        protected RegionFlags regionFlags = new RegionFlags();
 
-      if (JBIG2StreamDecoder.debug)
-        Console.WriteLine("Bitmap size = " + regionBitmapWidth + 'x' + regionBitmapHeight);
+        public RegionSegment(JBIG2StreamDecoder streamDecoder) : base(streamDecoder) { }
 
-      buff = new short[4];
-      decoder.Readbyte(buff);
-      regionBitmapXLocation = BinaryOperation.GetInt32(buff);
+        public override void ReadSegment()
+        {
+            short[] buff = new short[4];
+            decoder.Readbyte(buff);
+            regionBitmapWidth = BinaryOperation.GetInt32(buff);
 
-      buff = new short[4];
-      decoder.Readbyte(buff);
-      regionBitmapYLocation = BinaryOperation.GetInt32(buff);
+            buff = new short[4];
+            decoder.Readbyte(buff);
+            regionBitmapHeight = BinaryOperation.GetInt32(buff);
 
-      if (JBIG2StreamDecoder.debug)
-        Console.WriteLine("Bitmap location = " + regionBitmapXLocation + ',' + regionBitmapYLocation);
+            if (JBIG2StreamDecoder.debug)
+                Console.WriteLine("Bitmap size = " + regionBitmapWidth + 'x' + regionBitmapHeight);
 
-      /** extract region Segment flags */
-      short regionFlagsField = decoder.Readbyte();
+            buff = new short[4];
+            decoder.Readbyte(buff);
+            regionBitmapXLocation = BinaryOperation.GetInt32(buff);
 
-      regionFlags.SetFlags(regionFlagsField);
+            buff = new short[4];
+            decoder.Readbyte(buff);
+            regionBitmapYLocation = BinaryOperation.GetInt32(buff);
 
-      if (JBIG2StreamDecoder.debug)
-        Console.WriteLine("region Segment flags = " + regionFlagsField);
+            if (JBIG2StreamDecoder.debug)
+                Console.WriteLine("Bitmap location = " + regionBitmapXLocation + ',' + regionBitmapYLocation);
+
+            /** extract region Segment flags */
+            short regionFlagsField = decoder.Readbyte();
+
+            regionFlags.SetFlags(regionFlagsField);
+
+            if (JBIG2StreamDecoder.debug)
+                Console.WriteLine("region Segment flags = " + regionFlagsField);
+        }
     }
-  }
 }

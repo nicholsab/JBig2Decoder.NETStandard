@@ -1,27 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace JBig2Decoder.NETStandard
 {
-	public class PatternDictionaryFlags : Flags
-	{
+    public class PatternDictionaryFlags : Flags
+    {
 
-		public const string HD_MMR = "HD_MMR";
-		public const string HD_TEMPLATE = "HD_TEMPLATE";
+        public const string HD_MMR = "HD_MMR";
+        public const string HD_TEMPLATE = "HD_TEMPLATE";
 
-		public override void SetFlags(int flagsAsInt)
-		{
-			this.flagsAsInt = flagsAsInt;
+        public override void SetFlags(int flagsAsInt)
+        {
+            this.flagsAsInt = flagsAsInt;
 
-			/** extract HD_MMR */
-			flags[HD_MMR] = flagsAsInt & 1;
+            /** extract HD_MMR */
+            flags[HD_MMR] = flagsAsInt & 1;
 
-			/** extract HD_TEMPLATE */
-			flags[HD_TEMPLATE] = (flagsAsInt >> 1) & 3;
+            /** extract HD_TEMPLATE */
+            flags[HD_TEMPLATE] = (flagsAsInt >> 1) & 3;
 
-			if (JBIG2StreamDecoder.debug)
-				Console.WriteLine(flags);
-		}
-	}
+            if (JBIG2StreamDecoder.debug)
+                Console.WriteLine(flags);
+        }
+    }
 }

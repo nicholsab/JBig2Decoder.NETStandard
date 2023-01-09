@@ -1,83 +1,79 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace JBig2Decoder.NETStandard
+﻿namespace JBig2Decoder.NETStandard
 {
-	public class Big2StreamReader
-	{
-		private byte[] data;
+    public class Big2StreamReader
+    {
+        private byte[] data;
 
-		private int bitPointer = 7;
+        private int bitPointer = 7;
 
-		private int bytePointer = 0;
+        private int bytePointer = 0;
 
-		public Big2StreamReader(byte[] data)
-		{
-			this.data = data;
-		}
+        public Big2StreamReader(byte[] data)
+        {
+            this.data = data;
+        }
 
-		public short Readbyte()
-		{
-			short bite = (short)(data[bytePointer++] & 255);
+        public short Readbyte()
+        {
+            short bite = (short)(data[bytePointer++] & 255);
 
-			return bite;
-		}
+            return bite;
+        }
 
-		public void Readbyte(short[] buf)
-		{
-			for (int i = 0; i < buf.Length; i++)
-			{
-				buf[i] = (short)(data[bytePointer++] & 255);
-			}
-		}
+        public void Readbyte(short[] buf)
+        {
+            for (int i = 0; i < buf.Length; i++)
+            {
+                buf[i] = (short)(data[bytePointer++] & 255);
+            }
+        }
 
-		public int ReadBit()
-		{
-			short buf = Readbyte();
-			short mask = (short)(1 << bitPointer);
+        public int ReadBit()
+        {
+            short buf = Readbyte();
+            short mask = (short)(1 << bitPointer);
 
-			int bit = (buf & mask) >> bitPointer;
+            int bit = (buf & mask) >> bitPointer;
 
-			bitPointer--;
-			if (bitPointer == -1)
-			{
-				bitPointer = 7;
-			}
-			else
-			{
-				MovePointer(-1);
-			}
+            bitPointer--;
+            if (bitPointer == -1)
+            {
+                bitPointer = 7;
+            }
+            else
+            {
+                MovePointer(-1);
+            }
 
-			return bit;
-		}
+            return bit;
+        }
 
-		public int ReadBits(long num)
-		{
-			int result = 0;
+        public int ReadBits(long num)
+        {
+            int result = 0;
 
-			for (int i = 0; i < num; i++)
-			{
-				result = (result << 1) | ReadBit();
-			}
+            for (int i = 0; i < num; i++)
+            {
+                result = (result << 1) | ReadBit();
+            }
 
-			return result;
-		}
+            return result;
+        }
 
-		public void MovePointer(int ammount)
-		{
-			bytePointer += ammount;
-		}
+        public void MovePointer(int ammount)
+        {
+            bytePointer += ammount;
+        }
 
-		public void ConsumeRemainingBits()
-		{
-			if (bitPointer != 7)
-				ReadBits(bitPointer + 1);
-		}
+        public void ConsumeRemainingBits()
+        {
+            if (bitPointer != 7)
+                ReadBits(bitPointer + 1);
+        }
 
-		public bool IsFinished()
-		{
-			return bytePointer == data.Length;
-		}
-	}
+        public bool IsFinished()
+        {
+            return bytePointer == data.Length;
+        }
+    }
 }
