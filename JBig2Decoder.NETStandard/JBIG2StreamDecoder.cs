@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace JBig2Decoder.NETStandard
 {
-    public enum ImageFormat { JPEG, TIFF, PNG }
     public class JBIG2StreamDecoder
     {
         public static bool debug = false;
@@ -36,12 +34,14 @@ namespace JBig2Decoder.NETStandard
         /// <param name="input"></param>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        /// <param name="stride"></param>
         /// <returns></returns>
-        private byte[] BitsToImage(byte[] input, int width, int height, int stride, ImageFormat format)
+        private byte[] BitsToImage(byte[] input, int width, int height)
         {
             int n = 0;
-            var bmp = new Bitmap(width, height);
+            int k = 0;
+            int stride = (width * 1 + 7) / 8;
+            const int rgb = 3;
+            var bmp = new byte[width * height * rgb];
             for (int y = 0; y < height; y++)
             {
                 int x = 0;
@@ -56,14 +56,15 @@ namespace JBig2Decoder.NETStandard
                     for (int b0 = 7; b0 >= 0; b0--)
                     {
                         var bit = b & (1 << b0);
-                        if (bit == 0)
+                        byte color = 0;
+                        if (bit != 0)
                         {
-                            bmp.SetPixel(x, y, Color.Black);
+                            color = 0xFF;
                         }
-                        else
-                        {
-                            bmp.SetPixel(x, y, Color.White);
-                        }
+
+                        bmp[k++] = color;
+                        bmp[k++] = color;
+                        bmp[k++] = color;
 
                         x++;
                         if (x >= width)
@@ -74,24 +75,10 @@ namespace JBig2Decoder.NETStandard
                 }
             }
 
-            var memory = new MemoryStream();
-            if (format == ImageFormat.JPEG)
-            {
-                bmp.Save(memory, System.Drawing.Imaging.ImageFormat.Jpeg);
-            }
-            else if (format == ImageFormat.PNG)
-            {
-                bmp.Save(memory, System.Drawing.Imaging.ImageFormat.Png);
-            }
-            else
-            {
-                bmp.Save(memory, System.Drawing.Imaging.ImageFormat.Tiff);
-            }
-
-            return memory.ToArray();
+            return bmp;
         }
 
-        public byte[] DecodeJBIG2(byte[] data, ImageFormat format = ImageFormat.TIFF, int NewWidth = 0, int NewHeight = 0)
+        public byte[] DecodeJBIG2(byte[] data, out int width, out int height)
         {
             reader = new Big2StreamReader(data);
             ResetDecoder();
@@ -169,18 +156,11 @@ namespace JBig2Decoder.NETStandard
 
             //Create Image
             var rawimage = FindPageSegement(1).GetPageBitmap();
-            int width = (int)rawimage.GetWidth();
-            int height = (int)rawimage.GetHeight();
+            width = (int)rawimage.GetWidth();
+            height = (int)rawimage.GetHeight();
             var dataStream = rawimage.GetData(true);
-            int stride = (width * 1 + 7) / 8;
 
-            // This section is new for .net standard 2.0
-            var bmp = BitsToImage(dataStream, width, height, stride, format);
-            if (NewWidth != 0 && NewHeight != 0)
-            {
-                var newbitmap = ResizeHelpers.ScaleImage(bmp, NewWidth, NewHeight);
-                return newbitmap;
-            }
+            var bmp = BitsToImage(dataStream, width, height);
 
             return bmp;
         }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net4.8</TargetFrameworks>
     <Authors>nicholsab</Authors>
     <Description>.NET Standard 2.0 compatible JBig2 to PNG converter.  Based off of https://www.nuget.org/packages/JBig2Decoder.NETCore/</Description>
     <Copyright>nicholsab 2023</Copyright>
