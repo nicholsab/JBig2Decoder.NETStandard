@@ -8,10 +8,11 @@ namespace JBig2Decoder.NETStandard.Test
     public class JBig2Tests
     {
         [TestMethod()]
-        [DeploymentItem(@"TestData\a8.jb2")]
+        [DeploymentItem("TestData\\")]
+        [DeploymentItem("a8.jb2")]
         public void VerifySizeTest()
         {
-            string file = @"TestData\a8.jb2";
+            string file = @"a8.jb2";
             var input = File.ReadAllBytes(file);
             var jbig = new JBIG2StreamDecoder();
             int width = 0;
@@ -23,10 +24,11 @@ namespace JBig2Decoder.NETStandard.Test
         }
 
         [TestMethod()]
-        [DeploymentItem(@"TestData\c0001.jb2")]
+        [DeploymentItem("TestData\\")]
+        [DeploymentItem(@"c0001.jb2")]
         public void VerifyBigSizeTest()
         {
-            string file = @"TestData\c0001.jb2";
+            string file = @"c0001.jb2";
             var input = File.ReadAllBytes(file);
             var jbig = new JBIG2StreamDecoder();
             int width = 0;
@@ -38,10 +40,11 @@ namespace JBig2Decoder.NETStandard.Test
         }
 
         [TestMethod()]
-        [DeploymentItem(@"TestData\c0001.jb2")]
+        [DeploymentItem("TestData\\")]
+        [DeploymentItem(@"c0001.jb2")]
         public void VerifyImageTest()
         {
-            string file = @"TestData\c0001.jb2";
+            string file = @"c0001.jb2";
             var input = File.ReadAllBytes(file);
             var jbig = new JBIG2StreamDecoder();
             int width = 0;
@@ -52,10 +55,11 @@ namespace JBig2Decoder.NETStandard.Test
         }
 
         [TestMethod()]
-        [DeploymentItem(@"TestData\crows1.jb2")]
+        [DeploymentItem("TestData\\")]
+        [DeploymentItem(@"crows1.jb2")]
         public void VerifyImage2Test()
         {
-            string file = @"TestData\crows1.jb2";
+            string file = @"crows1.jb2";
             var input = File.ReadAllBytes(file);
             var jbig = new JBIG2StreamDecoder();
             int width = 0;

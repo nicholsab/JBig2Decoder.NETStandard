@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JBig2Decoder.NETStandard", "JBig2Decoder.NETStandard\JBig2Decoder.NETStandard.csproj", "{18E187C7-AF0F-4534-971F-6BAF04E7D2F5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JBig2Decoder.NETStandard.Test", "JBig2Decoder.NETStandard.Test\JBig2Decoder.NETStandard.Test.csproj", "{E0168A7A-D17C-444A-9FCB-68A49C0FB6A6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{18E187C7-AF0F-4534-971F-6BAF04E7D2F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18E187C7-AF0F-4534-971F-6BAF04E7D2F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18E187C7-AF0F-4534-971F-6BAF04E7D2F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18E187C7-AF0F-4534-971F-6BAF04E7D2F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0168A7A-D17C-444A-9FCB-68A49C0FB6A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0168A7A-D17C-444A-9FCB-68A49C0FB6A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0168A7A-D17C-444A-9FCB-68A49C0FB6A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0168A7A-D17C-444A-9FCB-68A49C0FB6A6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B542A5C2-BF1A-45DB-99E8-A8E5724FD603}
+	EndGlobalSection
+EndGlobal

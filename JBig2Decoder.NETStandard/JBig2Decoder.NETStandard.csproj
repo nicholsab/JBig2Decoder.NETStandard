@@ -3,15 +3,34 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0;net4.8</TargetFrameworks>
     <Authors>nicholsab</Authors>
-    <Description>.NET Standard 2.0 compatible JBig2 to PNG converter.  Based off of https://www.nuget.org/packages/JBig2Decoder.NETCore/</Description>
+    <Description>Library that converts JBIG2 (.jb2) files to binary image arrays.  Each pixel is white or black and the compression is 2-4 times smaller than JBIG!
+
+The library has no dependencies and is compiled for .NET6, .NETStandard2.1, .NETStandard2.0, and .NET Framework 4.8.
+
+It is based off of https://www.nuget.org/packages/JBig2Decoder.NETCore/</Description>
     <Copyright>nicholsab 2023</Copyright>
-    <PackageReleaseNotes>A .NET Standard 2.0 version of JBig2Decoder.NET https://www.nuget.org/packages/JBig2Decoder.NET/.  Which is a .Net Port of the JPedal JBig2Decoder Implementation.</PackageReleaseNotes>
+    <PackageReleaseNotes>Library that converts JBIG2 (.jb2) files to binary image arrays.  Each pixel is white or black and the compression is 2-4 times smaller than JBIG!
+
+The library has no dependencies and is compiled for .NET6, .NETStandard2.1, .NETStandard2.0, and .NET Framework 4.8.
+
+It is based off of https://www.nuget.org/packages/JBig2Decoder.NETCore/</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/nicholsab/JBig2Decoder.NETStandard</RepositoryUrl>
     <PackageProjectUrl>https://github.com/nicholsab/JBig2Decoder.NETStandard</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <AssemblyVersion>1.4.0.0</AssemblyVersion>
     <FileVersion>1.4.0.0</FileVersion>
     <Version>1.4.0</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>JBig2Decoder</Title>
+    <PackageTags>jbig2;jb2;binary image;pixels;bi-level image;</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
