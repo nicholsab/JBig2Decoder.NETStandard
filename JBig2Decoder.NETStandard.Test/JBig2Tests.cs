@@ -1,6 +1,3 @@
-//using SixLabors.ImageSharp;
-//using SixLabors.ImageSharp.Formats;
-//using SixLabors.ImageSharp.PixelFormats;
 
 namespace JBig2Decoder.NETStandard.Test
 {
@@ -65,9 +62,6 @@ namespace JBig2Decoder.NETStandard.Test
             int width = 0;
             int height = 0;
             var output = jbig.DecodeJBIG2(input, out width, out height);
-
-            //var image = Image.LoadPixelData<Rgb24>(output, width, height);
-            //image.SaveAsBmp("c:\\temp\\x1.bmp");
 
             Assert.AreEqual(1588125, output.Length);
         }

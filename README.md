@@ -4,8 +4,8 @@ Converts a JBIG2 (*.jb2) image to a RGB byte array. JBIG2 images offer lossless 
 
 There are no package dependencies and it is compiled for:
     
-1) .NET 6.0
-2) .NET Standard 2.1
+1) .NET 8.0
+2) .NET 6.0
 3) .NET Standard 2.0
 4) .NET Framework 4.8
 
@@ -28,6 +28,8 @@ image.SaveAsPng("pic.png");
 ```
 
 # Versions 
+
+* 1.5.0 - .NET 8
 
 * 1.4.0 - All package dependencies removed and only a byte array is created
 
