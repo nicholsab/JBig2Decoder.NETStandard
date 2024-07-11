@@ -1282,6 +1282,11 @@ namespace JBig2Decoder.NETStandard
             //			setPixelbyte(i, yDest, getPixelbyte(i, ySrc));
             //			i += 8;
             //		}
+            if (ySrc < 0)
+            {
+                ySrc = 0;
+            }
+
             for (int i = 0; i < width; i++)
             {
                 SetPixel(i, yDest, GetPixel(i, ySrc));
