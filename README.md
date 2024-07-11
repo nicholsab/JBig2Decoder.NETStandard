@@ -29,6 +29,8 @@ image.SaveAsPng("pic.png");
 
 # Versions 
 
+* 1.5.1 - Negative bug fix
+
 * 1.5.0 - .NET 8
 
 * 1.4.0 - All package dependencies removed and only a byte array is created
