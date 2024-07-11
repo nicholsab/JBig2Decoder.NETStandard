@@ -1284,7 +1284,7 @@ namespace JBig2Decoder.NETStandard
             //		}
             if (ySrc < 0)
             {
-	            ySrc = 0;
+                ySrc = 0;
             }
 
             for (int i = 0; i < width; i++)
