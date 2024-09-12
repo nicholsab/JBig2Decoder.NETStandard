@@ -65,5 +65,22 @@ namespace JBig2Decoder.NETStandard.Test
 
             Assert.AreEqual(1588125, output.Length);
         }
+
+        [TestMethod()]
+        [DeploymentItem("TestData\\")]
+        [DeploymentItem(@"pdf-stream11-0.jbig2")]
+        public void VerifyPdfTest1()
+        {
+            string file = @"pdf-stream11-0.jbig2";
+            var input = File.ReadAllBytes(file);
+            var jbig = new JBIG2StreamDecoder();
+            int width = 0;
+            int height = 0;
+            var output = jbig.DecodeJBIG2(input, out width, out height);
+
+            Assert.AreEqual(8591724, output.Length);
+            Assert.AreEqual(2014, height);
+            Assert.AreEqual(1422, width);
+        }
     }
 }
