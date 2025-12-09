@@ -18,6 +18,13 @@ namespace JBig2Decoder.NETStandard
         private List<JBIG2Bitmap> bitmaps = new List<JBIG2Bitmap>();
         private byte[] globalData;
 
+        /// <summary>
+        /// When true, tolerates missing segment references by skipping them with a warning.
+        /// When false (default), throws InvalidOperationException on missing references per ITU-T T.88.
+        /// Enable this to match the lenient behavior of Chrome/Acrobat for malformed JBIG2 streams.
+        /// </summary>
+        public bool TolerateMissingSegments { get; set; } = false;
+
         public void MovePointer(int i)
         {
             reader.MovePointer(i);
@@ -155,7 +162,21 @@ namespace JBig2Decoder.NETStandard
             ReadSegments();
 
             //Create Image
-            var rawimage = FindPageSegement(1).GetPageBitmap();
+            var pageSegment = FindPageSegement(1);
+            if (pageSegment == null)
+            {
+                throw new InvalidOperationException(
+                    "JBIG2 Error: Page information segment (page 1) not found. " +
+                    "Stream may be missing page segment or be corrupted.");
+            }
+
+            var rawimage = pageSegment.GetPageBitmap();
+            if (rawimage == null)
+            {
+                throw new InvalidOperationException(
+                    "JBIG2 Error: Page bitmap not available. Page segment may not have been initialized correctly.");
+            }
+
             width = (int)rawimage.GetWidth();
             height = (int)rawimage.GetHeight();
             var dataStream = rawimage.GetData(true);
@@ -360,8 +381,12 @@ namespace JBig2Decoder.NETStandard
 
                 if (!randomAccessOrganisation)
                 {
+                    if (JBIG2StreamDecoder.debug)
+                        Console.WriteLine($"[JBIG2] Reading segment #{segmentHeader.GetSegmentNumber()}, type={segmentType}");
                     segment.ReadSegment();
                 }
+                if (JBIG2StreamDecoder.debug)
+                    Console.WriteLine($"[JBIG2] Added segment #{segmentHeader.GetSegmentNumber()} to list (total: {segments.Count})");
                 segments.Add(segment);
             }
 
@@ -636,7 +661,21 @@ namespace JBig2Decoder.NETStandard
         }
         public JBIG2Bitmap GetPageAsJBIG2Bitmap(int i)
         {
-            JBIG2Bitmap pageBitmap = FindPageSegement(1).GetPageBitmap();
+            var pageSegment = FindPageSegement(1);
+            if (pageSegment == null)
+            {
+                throw new InvalidOperationException(
+                    "JBIG2 Error: Page information segment (page 1) not found. " +
+                    "Stream may be missing page segment or be corrupted.");
+            }
+
+            JBIG2Bitmap pageBitmap = pageSegment.GetPageBitmap();
+            if (pageBitmap == null)
+            {
+                throw new InvalidOperationException(
+                    "JBIG2 Error: Page bitmap not available. Page segment may not have been initialized correctly.");
+            }
+
             return pageBitmap;
         }
         public bool IsNumberOfPagesKnown()
