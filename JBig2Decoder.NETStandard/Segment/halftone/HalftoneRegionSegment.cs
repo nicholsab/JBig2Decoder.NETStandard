@@ -57,6 +57,22 @@ namespace JBig2Decoder.NETStandard
             }
 
             Segment segment = decoder.FindSegment(referedToSegments[0]);
+            if (segment == null)
+            {
+                if (decoder.TolerateMissingSegments)
+                {
+                    if (JBIG2StreamDecoder.debug)
+                        Console.WriteLine($"[JBIG2 Warning] Pattern dictionary segment {referedToSegments[0]} not found in halftone region. Skipping (tolerance mode enabled).");
+                    return; // Cannot continue without pattern dictionary
+                }
+                else
+                {
+                    throw new InvalidOperationException(
+                        $"JBIG2 Error: Required pattern dictionary segment {referedToSegments[0]} not found in halftone region. " +
+                        "Stream may contain invalid forward reference (not allowed in sequential organization per ITU-T T.88) or be corrupted.");
+                }
+            }
+
             if (segment.GetSegmentHeader().GetSegmentType() != Segment.PATTERN_DICTIONARY)
             {
                 if (JBIG2StreamDecoder.debug)

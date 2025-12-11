@@ -672,7 +672,6 @@ namespace JBig2Decoder.NETStandard
         public void ReadTextRegion(bool huffman, bool symbolRefine, long noOfSymbolInstances, long logStrips, long noOfSymbols, long[,] symbolCodeTable, long symbolCodeLength, JBIG2Bitmap[] symbols, int defaultPixel, int combinationOperator, bool transposed, int referenceCorner, int sOffset, long[,] huffmanFSTable, long[,] huffmanDSTable, long[,] huffmanDTTable, long[,] huffmanRDWTable, long[,] huffmanRDHTable, long[,] huffmanRDXTable, long[,] huffmanRDYTable, long[,] huffmanRSizeTable, int template, short[] symbolRegionAdaptiveTemplateX,
             short[] symbolRegionAdaptiveTemplateY, JBIG2StreamDecoder decoder)
         {
-
             JBIG2Bitmap symbolBitmap;
 
             int strips = 1 << (int)logStrips;
@@ -751,10 +750,16 @@ namespace JBig2Decoder.NETStandard
                         symbolID = arithmeticDecoder.DecodeIAID(symbolCodeLength, arithmeticDecoder.iaidStats);
                     }
 
-                    if (symbolID >= noOfSymbols)
+                    // Bounds check using actual symbols array length to handle tolerance mode
+                    // where noOfSymbols may not match symbols.Length if segments were skipped
+                    if (symbolID >= noOfSymbols || symbolID >= symbols.Length)
                     {
                         if (JBIG2StreamDecoder.debug)
-                            Console.WriteLine("Invalid symbol number in JBIG2 text region");
+                            Console.WriteLine($"[JBIG2 Warning] Invalid symbol ID {symbolID} (noOfSymbols={noOfSymbols}, symbols.Length={symbols.Length}). Using blank symbol.");
+
+                        // Create a blank symbol as fallback to continue gracefully
+                        symbolBitmap = new JBIG2Bitmap(1, 1, arithmeticDecoder, huffmanDecoder, mmrDecoder);
+                        symbolBitmap.Clear(0);
                     }
                     else
                     {
@@ -881,7 +886,6 @@ namespace JBig2Decoder.NETStandard
         public void ReadTextRegion2(bool huffman, bool symbolRefine, long noOfSymbolInstances, long logStrips, long noOfSymbols, long[][] symbolCodeTable, long symbolCodeLength, JBIG2Bitmap[] symbols, int defaultPixel, int combinationOperator, bool transposed, int referenceCorner, int sOffset, long[,] huffmanFSTable, long[,] huffmanDSTable, long[,] huffmanDTTable, long[,] huffmanRDWTable, long[,] huffmanRDHTable, long[,] huffmanRDXTable, long[,] huffmanRDYTable, long[,] huffmanRSizeTable, int template, short[] symbolRegionAdaptiveTemplateX,
             short[] symbolRegionAdaptiveTemplateY, JBIG2StreamDecoder decoder)
         {
-
             JBIG2Bitmap symbolBitmap;
 
             int strips = 1 << (int)logStrips;
@@ -963,10 +967,16 @@ namespace JBig2Decoder.NETStandard
                         symbolID = arithmeticDecoder.DecodeIAID(symbolCodeLength, arithmeticDecoder.iaidStats);
                     }
 
-                    if (symbolID >= noOfSymbols)
+                    // Bounds check using actual symbols array length to handle tolerance mode
+                    // where noOfSymbols may not match symbols.Length if segments were skipped
+                    if (symbolID >= noOfSymbols || symbolID >= symbols.Length)
                     {
                         if (JBIG2StreamDecoder.debug)
-                            Console.WriteLine("Invalid symbol number in JBIG2 text region");
+                            Console.WriteLine($"[JBIG2 Warning] Invalid symbol ID {symbolID} (noOfSymbols={noOfSymbols}, symbols.Length={symbols.Length}). Using blank symbol.");
+
+                        // Create a blank symbol as fallback to continue gracefully
+                        symbolBitmap = new JBIG2Bitmap(1, 1, arithmeticDecoder, huffmanDecoder, mmrDecoder);
+                        symbolBitmap.Clear(0);
                     }
                     else
                     {

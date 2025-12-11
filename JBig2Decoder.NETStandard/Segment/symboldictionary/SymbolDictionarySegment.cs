@@ -36,6 +36,22 @@ namespace JBig2Decoder.NETStandard
             for (i = 0; i < noOfReferredToSegments; i++)
             {
                 Segment seg = decoder.FindSegment(referredToSegments[i]);
+                if (seg == null)
+                {
+                    if (decoder.TolerateMissingSegments)
+                    {
+                        if (JBIG2StreamDecoder.debug)
+                            Console.WriteLine($"[JBIG2 Warning] Segment {referredToSegments[i]} not found in symbol dictionary. Skipping (tolerance mode enabled).");
+                        continue;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException(
+                            $"JBIG2 Error: Required segment {referredToSegments[i]} not found in symbol dictionary. " +
+                            "Stream may contain invalid forward reference (not allowed in sequential organization per ITU-T T.88) or be corrupted.");
+                    }
+                }
+
                 int type = seg.GetSegmentHeader().GetSegmentType();
 
                 if (type == Segment.SYMBOL_DICTIONARY)
@@ -63,6 +79,22 @@ namespace JBig2Decoder.NETStandard
             for (i = 0; i < noOfReferredToSegments; i++)
             {
                 Segment seg = decoder.FindSegment(referredToSegments[i]);
+                if (seg == null)
+                {
+                    if (decoder.TolerateMissingSegments)
+                    {
+                        if (JBIG2StreamDecoder.debug)
+                            Console.WriteLine($"[JBIG2 Warning] Segment {referredToSegments[i]} not found in symbol dictionary bitmap collection. Skipping (tolerance mode enabled).");
+                        continue;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException(
+                            $"JBIG2 Error: Required segment {referredToSegments[i]} not found in symbol dictionary bitmap collection. " +
+                            "Stream may contain invalid forward reference (not allowed in sequential organization per ITU-T T.88) or be corrupted.");
+                    }
+                }
+
                 if (seg.GetSegmentHeader().GetSegmentType() == Segment.SYMBOL_DICTIONARY)
                 {
                     inputSymbolDictionary = (SymbolDictionarySegment)seg;
@@ -264,13 +296,27 @@ namespace JBig2Decoder.NETStandard
                                 referenceDY = arithmeticDecoder.DecodeInt(arithmeticDecoder.iardyStats).IntResult();
                             }
 
-                            JBIG2Bitmap referredToBitmap = bitmaps[symbolID];
+                            // Bounds check for missing segments in tolerance mode
+                            if (symbolID >= numberOfInputSymbols + i)
+                            {
+                                if (JBIG2StreamDecoder.debug)
+                                    Console.WriteLine($"[JBIG2 Warning] Symbol ID {symbolID} out of bounds (max {numberOfInputSymbols + i - 1}). Using blank symbol.");
 
-                            JBIG2Bitmap bitmap = new JBIG2Bitmap(symbolWidth, deltaHeight, arithmeticDecoder, huffmanDecoder, mmrDecoder);
-                            bitmap.ReadGenericRefinementRegion(sdRefinementTemplate, false, referredToBitmap, referenceDX, referenceDY, symbolDictionaryRAdaptiveTemplateX,
-                                    symbolDictionaryRAdaptiveTemplateY);
+                                // Create a blank bitmap as fallback
+                                JBIG2Bitmap bitmap = new JBIG2Bitmap(symbolWidth, deltaHeight, arithmeticDecoder, huffmanDecoder, mmrDecoder);
+                                bitmap.Clear(0);
+                                bitmaps[numberOfInputSymbols + i] = bitmap;
+                            }
+                            else
+                            {
+                                JBIG2Bitmap referredToBitmap = bitmaps[symbolID];
 
-                            bitmaps[numberOfInputSymbols + i] = bitmap;
+                                JBIG2Bitmap bitmap = new JBIG2Bitmap(symbolWidth, deltaHeight, arithmeticDecoder, huffmanDecoder, mmrDecoder);
+                                bitmap.ReadGenericRefinementRegion(sdRefinementTemplate, false, referredToBitmap, referenceDX, referenceDY, symbolDictionaryRAdaptiveTemplateX,
+                                        symbolDictionaryRAdaptiveTemplateY);
+
+                                bitmaps[numberOfInputSymbols + i] = bitmap;
+                            }
 
                         }
                         else
@@ -369,8 +415,18 @@ namespace JBig2Decoder.NETStandard
                     long x = 0;
                     while (j < i)
                     {
-                        bitmaps[numberOfInputSymbols + j] = collectiveBitmap.GetSlice(x, 0, deltaWidths[j], deltaHeight);
-                        x += deltaWidths[j];
+                        // Bounds check for deltaWidths array
+                        if (j < deltaWidths.Length && (numberOfInputSymbols + j) < bitmaps.Length)
+                        {
+                            bitmaps[numberOfInputSymbols + j] = collectiveBitmap.GetSlice(x, 0, deltaWidths[j], deltaHeight);
+                            x += deltaWidths[j];
+                        }
+                        else
+                        {
+                            if (JBIG2StreamDecoder.debug)
+                                Console.WriteLine($"[JBIG2 Warning] Bitmap slice bounds exceeded. j={j}, deltaWidths.Length={deltaWidths.Length}");
+                            break;
+                        }
 
                         j++;
                     }
@@ -400,7 +456,17 @@ namespace JBig2Decoder.NETStandard
                 {
                     for (int cnt = 0; cnt < run; cnt++)
                     {
-                        this.bitmaps[j++] = bitmaps[i++];
+                        // Bounds check in case of corrupted data or missing segments
+                        if (i < bitmaps.Length && j < this.bitmaps.Length)
+                        {
+                            this.bitmaps[j++] = bitmaps[i++];
+                        }
+                        else
+                        {
+                            if (JBIG2StreamDecoder.debug)
+                                Console.WriteLine($"[JBIG2 Warning] Export bounds exceeded. i={i}, j={j}, bitmaps.Length={bitmaps.Length}, this.bitmaps.Length={this.bitmaps.Length}");
+                            break;
+                        }
                     }
                 }
                 else
