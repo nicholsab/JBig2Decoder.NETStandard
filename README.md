@@ -29,6 +29,8 @@ image.SaveAsPng("pic.png");
 
 # Versions 
 
+* 1.5.2 - Robust improvements for malformed streams and license updates.
+
 * 1.5.1 - Negative bug fix
 
 * 1.5.0 - .NET 8

@@ -48,6 +48,22 @@ namespace JBig2Decoder.NETStandard
             for (i = 0; i < noOfReferredToSegments; i++)
             {
                 Segment seg = decoder.FindSegment(referredToSegments[i]);
+                if (seg == null)
+                {
+                    if (decoder.TolerateMissingSegments)
+                    {
+                        if (JBIG2StreamDecoder.debug)
+                            Console.WriteLine($"[JBIG2 Warning] Segment {referredToSegments[i]} not found in text region. Skipping (tolerance mode enabled).");
+                        continue;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException(
+                            $"JBIG2 Error: Required segment {referredToSegments[i]} not found in text region. " +
+                            "Stream may contain invalid forward reference (not allowed in sequential organization per ITU-T T.88) or be corrupted.");
+                    }
+                }
+
                 int type = seg.GetSegmentHeader().GetSegmentType();
 
                 if (type == Segment.SYMBOL_DICTIONARY)
@@ -219,7 +235,7 @@ namespace JBig2Decoder.NETStandard
             }
 
             long[][] runLengthTable = new long[36][];
-            long[][] symbolCodeTable = new long[noOfSymbols + 1][];
+            long[][] symbolCodeTable;
             if (sbHuffman)
             {
 
@@ -240,39 +256,72 @@ namespace JBig2Decoder.NETStandard
 
                 runLengthTable = HuffmanDecoder.BuildTable(runLengthTable, 35);
 
-                for (i = 0; i < noOfSymbols; i++)
-                {
-                    symbolCodeTable[i] = new long[] { i, 0, 0, 0 };
-                }
-
+                // TOLERANCE MODE FIX: Read ALL symbol code lengths from bitstream,
+                // not just noOfSymbols. When segments are missing, the bitstream
+                // still contains code lengths for ALL symbols the encoder knew about.
+                // We must read all of them to build a complete Huffman table.
+                var symbolCodeLengths = new List<long>();
                 i = 0;
-                while (i < noOfSymbols)
+                while (true)
                 {
                     long j = huffmanDecoder.DecodeInt(runLengthTable).IntResult();
                     if (j > 0x200)
                     {
-                        for (j -= 0x200; j != 0 && i < noOfSymbols; j--)
+                        // Run of zeros
+                        for (j -= 0x200; j != 0; j--)
                         {
-                            symbolCodeTable[i++][1] = 0;
+                            symbolCodeLengths.Add(0);
+                            i++;
                         }
                     }
                     else if (j > 0x100)
                     {
-                        for (j -= 0x100; j != 0 && i < noOfSymbols; j--)
+                        // Run of previous code length
+                        long prevLength = symbolCodeLengths.Count > 0 ? symbolCodeLengths[symbolCodeLengths.Count - 1] : 0;
+                        for (j -= 0x100; j != 0; j--)
                         {
-                            symbolCodeTable[i][1] = symbolCodeTable[i - 1][1];
+                            symbolCodeLengths.Add(prevLength);
                             i++;
                         }
                     }
                     else
                     {
-                        symbolCodeTable[i++][1] = j;
+                        // Explicit code length
+                        symbolCodeLengths.Add(j);
+                        i++;
+                    }
+
+                    // Check if we've read enough symbols to match the bitstream's expected count
+                    // The encoder uses symbolCodeLength bits, so maximum symbol ID is (1 << symbolCodeLength) - 1
+                    if (symbolCodeLength > 0 && i >= (1 << (int)symbolCodeLength))
+                    {
+                        break;
+                    }
+
+                    // Safety: Stop if we've read an unreasonable number of symbols
+                    if (i > 10000)
+                    {
+                        if (JBIG2StreamDecoder.debug)
+                            Console.WriteLine($"[JBIG2 Warning] Read {i} symbol code lengths, stopping to prevent infinite loop.");
+                        break;
                     }
                 }
 
-                symbolCodeTable[noOfSymbols][1] = 0;
-                symbolCodeTable[noOfSymbols][2] = HuffmanDecoder.jbig2HuffmanEOT;
-                symbolCodeTable = HuffmanDecoder.BuildTable(symbolCodeTable, (int)noOfSymbols);
+                // Build symbolCodeTable with the actual size from bitstream
+                int totalSymbolsInBitstream = symbolCodeLengths.Count;
+                symbolCodeTable = new long[totalSymbolsInBitstream + 1][];
+
+                for (i = 0; i < totalSymbolsInBitstream; i++)
+                {
+                    symbolCodeTable[i] = new long[] { i, symbolCodeLengths[i], 0, 0 };
+                }
+
+                symbolCodeTable[totalSymbolsInBitstream][1] = 0;
+                symbolCodeTable[totalSymbolsInBitstream][2] = HuffmanDecoder.jbig2HuffmanEOT;
+                symbolCodeTable = HuffmanDecoder.BuildTable(symbolCodeTable, totalSymbolsInBitstream);
+
+                if (JBIG2StreamDecoder.debug && totalSymbolsInBitstream != noOfSymbols)
+                    Console.WriteLine($"[JBIG2 Info] Bitstream contains {totalSymbolsInBitstream} symbol codes, but only {noOfSymbols} symbols available (tolerance mode).");
 
                 decoder.ConsumeRemainingBits();
             }
